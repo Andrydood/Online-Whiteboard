@@ -1,0 +1,12 @@
+{
+  "name": "whiteboard",
+  "description": "",
+  "version": "1.0.0",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "path": "^0.12.7",
+    "pug": "^2.0.0-rc.4",
+    "websocket": "^1.0.25"
+  }
+}

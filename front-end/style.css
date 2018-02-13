@@ -1,0 +1,17 @@
+html, body {
+  margin: 0;
+  padding: 0; }
+
+#canvasContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh; }
+  #canvasContainer #canvas {
+    border: 1px solid black; }
+
+#controls {
+  display: inline; }
+
+/*# sourceMappingURL=style.css.map */
