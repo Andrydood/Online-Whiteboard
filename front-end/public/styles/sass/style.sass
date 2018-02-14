@@ -1,14 +1,50 @@
-#loginPage
-  text-align: center
-  margin-top: 100px
+$canvasWidth: 800px
+$canvasHeight: 500px
 
-#canvasContainer
+#pageTitle
+  margin: 20px
   text-align: center
+  width: 100%
 
-  #canvas
-    border: 1px solid black
-    margin: 25px
-    display: inline
-
-#controlContainer
+#loginScreen
+  margin: 20px
   text-align: center
+  width: 100%
+  display: none
+
+#mainContainer
+  margin-top: 20px
+  display: none
+
+  #canvasContainer
+    text-align: center
+
+    #canvas
+      border: 1px solid black
+      display: inline
+      margin: 0 auto
+
+    #controlRow
+      text-align: center
+      width: $canvasWidth
+      margin: 0 auto
+
+  #chatContainer
+    #chatBox
+      height: $canvasHeight
+      width: 350px
+      margin: 0 auto
+      border: 1px solid black
+      position: relative
+      background-color: #fff
+      
+      #chatInput
+        width: 100%
+        bottom: 0
+        border: 1px solid black
+        border-top: 2px solid black
+        height: 30px
+
+      #chatText
+        height: $canvasHeight - 30px
+        overflow: scroll

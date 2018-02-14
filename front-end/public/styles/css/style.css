@@ -1,15 +1,42 @@
-#loginPage {
+#pageTitle {
+  margin: 20px;
   text-align: center;
-  margin-top: 100px; }
+  width: 100%; }
 
-#canvasContainer {
-  text-align: center; }
-  #canvasContainer #canvas {
+#loginScreen {
+  margin: 20px;
+  text-align: center;
+  width: 100%;
+  display: none; }
+
+#mainContainer {
+  margin-top: 20px;
+  display: none; }
+  #mainContainer #canvasContainer {
+    text-align: center; }
+    #mainContainer #canvasContainer #canvas {
+      border: 1px solid black;
+      display: inline;
+      margin: 0 auto; }
+    #mainContainer #canvasContainer #controlRow {
+      text-align: center;
+      width: 800px;
+      margin: 0 auto; }
+  #mainContainer #chatContainer #chatBox {
+    height: 500px;
+    width: 350px;
+    margin: 0 auto;
     border: 1px solid black;
-    margin: 25px;
-    display: inline; }
-
-#controlContainer {
-  text-align: center; }
+    position: relative;
+    background-color: #fff; }
+    #mainContainer #chatContainer #chatBox #chatInput {
+      width: 100%;
+      bottom: 0;
+      border: 1px solid black;
+      border-top: 2px solid black;
+      height: 30px; }
+    #mainContainer #chatContainer #chatBox #chatText {
+      height: 470px;
+      overflow: scroll; }
 
 /*# sourceMappingURL=style.css.map */

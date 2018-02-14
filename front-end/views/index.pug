@@ -5,22 +5,5 @@ html
     link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css", integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm", crossorigin="anonymous")
 
   body
-    .container#canvasContainer
-      .row
-        .col-12
-          canvas#canvas
-                        
-      .row#controlContainer
-        .col-4
-          p Color
-          input#colorPicker(type='color')
-        .col-4
-          p Stroke Width
-          input#strokePicker(type='number', min='1', max='20', value='5')
-        .col-4
-          p Clear
-          button#clearButton Clear 
-      
-    script(src='scripts/canvas.js')
-    script(src='scripts/webSockets.js')
-    script(src='scripts/loginPage.js')
+    h1#pageTitle Whiteboard/Chatroom
+    block content

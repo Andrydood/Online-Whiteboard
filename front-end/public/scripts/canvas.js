@@ -12,6 +12,7 @@ canvas.setAttribute("height", "500px");
 canvas.setAttribute("width", "800px");
 
 let strokeEvent = {
+  username: '',
   strokeStyle: '',
   lineWidth: '',
   paths: []
@@ -26,6 +27,7 @@ function mousedown(){
   const canvasPos = getCanvasPos();
 
   strokeEvent = {
+    username: username,
     strokeStyle: ctx.strokeStyle,
     lineWidth: ctx.lineWidth,
     paths: [{x:canvasPos.x,y:canvasPos.y}]

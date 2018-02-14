@@ -1,10 +1,3 @@
-const drawingSocket = new WebSocket( "ws://10.134.214.147:8080/","collaborative-whiteboard");
-
-drawingSocket.onmessage = function (event) {
-  const strokes = JSON.parse(event.data);
-  strokes.map(stroke=>replayHistory(stroke));
-}
-
 function sendStrokeToSocket(){
   drawingSocket.send(JSON.stringify(strokeEvent));
 }
