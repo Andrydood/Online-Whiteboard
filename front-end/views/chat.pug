@@ -1,0 +1,15 @@
+extends general.pug
+
+block links
+  p#whiteboardLink.textLink Whiteboard
+  
+block main
+  .container-fluid#mainContainer
+    .row
+      .col-12#chatContainer
+        #chatBox
+          #chatText
+          form#chatForm
+            input#chatInput(type="text" autocomplete="off")
+   
+  script(src='scripts/chat.js')

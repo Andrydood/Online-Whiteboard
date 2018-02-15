@@ -1,8 +1,11 @@
 let isMouseDown = false;
-
+const clearButton = document.getElementById('clearButton');
 const canvas = document.getElementById('canvas');
 const canvasContainer = document.getElementById('canvasContainer');
 const ctx = canvas.getContext('2d');
+const chatLink = document.getElementById("chatLink");
+
+chatLink.onclick = (()=>window.location = window.location.origin + "/chat");
 
 canvas.addEventListener("mouseup",mouseup);
 canvas.addEventListener("mousedown",mousedown);
@@ -12,13 +15,15 @@ canvas.setAttribute("height", "500px");
 canvas.setAttribute("width", "800px");
 
 let strokeEvent = {
-  username: '',
   strokeStyle: '',
   lineWidth: '',
   paths: []
 };
 
-//Click events
+clearButton.onclick = function(){
+  drawingSocket.send('clear');
+}
+
 function mousedown(){
   ctx.strokeStyle = document.getElementById('colorPicker').value;
   ctx.lineWidth = document.getElementById('strokePicker').value;;
@@ -27,7 +32,6 @@ function mousedown(){
   const canvasPos = getCanvasPos();
 
   strokeEvent = {
-    username: username,
     strokeStyle: ctx.strokeStyle,
     lineWidth: ctx.lineWidth,
     paths: [{x:canvasPos.x,y:canvasPos.y}]
@@ -61,8 +65,32 @@ function getCanvasPos(){
 function draw(){
   const canvasPos = getCanvasPos();
   strokeEvent.paths.push({x:canvasPos.x,y:canvasPos.y});
-  sendStrokeToSocket();
+  drawingSocket.send(JSON.stringify(strokeEvent));
 }
+
+function replayHistory(strokes){
+  if(strokes===null){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  else{
+    ctx.strokeStyle = strokes.strokeStyle;
+    ctx.lineWidth = strokes.lineWidth;
+    ctx.lineCap = 'round';
+
+    ctx.beginPath();
+    strokes.paths.map(position=>ctx.lineTo(position.x,position.y));
+    ctx.stroke();
+  }
+}
+
+function initDrawingSocket(){
+  drawingSocket = new WebSocket( "ws://"+ip+":8080/","collaborative-whiteboard");
+  drawingSocket.onmessage = function (event) {
+    const strokes = JSON.parse(event.data);
+    strokes.map(stroke=>replayHistory(stroke));
+  }
+}
+
 
 
 // canvas.addEventListener("touchstart",touchstart);

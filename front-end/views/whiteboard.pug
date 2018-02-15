@@ -1,0 +1,23 @@
+extends general.pug
+
+block links
+  p#chatLink.textLink Chat
+  
+block main
+  .container-fluid#mainContainer
+    .row
+      .col-12#canvasContainer
+        .row#canvasRow
+          canvas#canvas
+        .row#controlRow
+          .col-4
+            p Color
+            input#colorPicker(type='color')
+          .col-4
+            p Stroke Width
+            input#strokePicker(type='number', min='1', max='20', value='5')
+          .col-4
+            p Clear
+            button#clearButton Clear 
+     
+  script(src='scripts/canvas.js')

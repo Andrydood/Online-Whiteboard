@@ -15,12 +15,10 @@
 #loginScreen {
   margin: 20px;
   text-align: center;
-  width: 100%;
-  display: none; }
+  width: 100%; }
 
 #mainContainer {
-  margin-top: 20px;
-  display: none; }
+  margin-top: 20px; }
   #mainContainer #canvasContainer {
     text-align: center; }
     #mainContainer #canvasContainer #canvas {
