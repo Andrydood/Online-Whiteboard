@@ -20,6 +20,8 @@ else{
   mainContainer.style.display = "block";
   setCookie('username',username,7)
   addLoginInfo();
+  initDrawingSocket();
+  initChattingSocket();
 }
 
 loginForm.addEventListener("submit",loginFunction);
