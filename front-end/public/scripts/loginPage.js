@@ -2,37 +2,87 @@ const loginScreen =  document.getElementById("loginScreen");
 const mainContainer =  document.getElementById("mainContainer");
 const loginForm = document.getElementById("loginForm");
 const nameInput = document.getElementById("nameInput");
+const userStatus = document.getElementById("userStatus");
+const ip = "10.134.214.147";
 
-loginForm.addEventListener("submit",loginFunction);
+const usernameCookie = getCookie('username');
 
-loginScreen.style.display = "block";
-mainContainer.style.display = "none";
-
-let username = "user";
+let username = usernameCookie;
 let drawingSocket;
 let chattingSocket;
 
-function loginFunction(e){
-  e.preventDefault();
-  username = nameInput.value;
+if(username === ""){
+  loginScreen.style.display = "block";
+  mainContainer.style.display = "none";
+}
+else{
   loginScreen.style.display = "none";
   mainContainer.style.display = "block";
-  initDrawingSocket();
-  initChattingSocket();
+  setCookie('username',username,7)
+  addLoginInfo();
 }
 
-function initDrawingSocket(){
-  drawingSocket = new WebSocket( "ws://192.168.0.47.:8080/","collaborative-whiteboard");
-  drawingSocket.onmessage = function (event) {
-    const strokes = JSON.parse(event.data);
-    strokes.map(stroke=>replayHistory(stroke));
+loginForm.addEventListener("submit",loginFunction);
+
+function loginFunction(e){
+  e.preventDefault();
+  const usernameInput = nameInput.value;
+  if(!isNullOrWhiteSpace(usernameInput)){
+    username = usernameInput;
+    setCookie('username',usernameInput,7)
+    loginScreen.style.display = "none";
+    mainContainer.style.display = "block";
+    addLoginInfo();
+    initDrawingSocket();
+    initChattingSocket();
   }
 }
 
-function initChattingSocket(){
-  chattingSocket = new WebSocket( "ws://192.168.0.47.:8090/?name="+username,"chat");
-  chattingSocket.onmessage = function (event) {
-    const messages = JSON.parse(event.data);
-    messages.map(message=>newMessage(message));
-  }
+function addLoginInfo(){
+  const par = document.createElement('p');
+  const loggedInText = document.createTextNode('Logged in as: '+ username +' ')
+  const link = document.createElement('p');
+  const linkText = document.createTextNode('(change)')
+  par.appendChild(loggedInText);
+  link.appendChild(linkText);
+  link.classList.add("textLink");
+  link.onclick = deleteCookiesAndRefreshPage;
+  userStatus.appendChild(par);
+  userStatus.appendChild(link);
+}
+
+function deleteCookiesAndRefreshPage(){
+  deleteCookie('username');
+  location.reload();
+}
+
+function isNullOrWhiteSpace(str) {
+  return (!str || str.length === 0 || /^\s*$/.test(str));
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function deleteCookie(cname) {
+    document.cookie = cname+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }
