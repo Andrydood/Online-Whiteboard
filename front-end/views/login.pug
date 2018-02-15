@@ -1,0 +1,9 @@
+extends general.pug
+
+block main
+  #loginScreen
+    h2 Chose a Username
+    form#loginForm
+      input#nameInput(type="text" autocomplete="off")
+  
+  script(src='scripts/loginPage.js')
