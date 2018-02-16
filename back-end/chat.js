@@ -1,67 +1,64 @@
-const WebSocketServer = require('websocket').server;
-const http = require('http');
+const WebSocket = require('ws');
+const URLSearchParams = require('url-search-params');
+
 
 //Arrays containing list of messages and list of current online users
 let messageList = [];
 let currentConnections = [];
 
 //Start server and listening on port 8090
-const chatServer = http.createServer((request, response) => console.log(' Received request for ' + request.url));
+const wss = new WebSocket.Server({ port: 8090 });
 
-chatServer.listen(8090,() => console.log('Chat Server is listening on port 8090'));
+wss.broadcast = function broadcast(data) {
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  });
+};
 
-chatWSServer = new WebSocketServer({
-    httpServer: chatServer,
-    autoAcceptConnections: false
-});
+wss.on('connection', function(connection, req) {
 
-chatWSServer.on('request', function(request) {
+  const params = new URLSearchParams(req.url);
+  const username = params.get('/?name');
 
-    //Accept request
-    const connection = request.accept('chat', request.origin);
+  //Add new connection to array
+  currentConnections.push({username: username});
+  console.log(username+' has logged in');
 
-    //Add new connection to array
-    currentConnections.push({username: request.resourceURL.query.name, connection: connection});
-    console.log(request.resourceURL.query.name+' has logged in');
+  //Send message history
+  connection.send(JSON.stringify({
+    messages:messageList,
+    onlineUsers:currentConnections.map(connection=>connection.username)
+  }));
 
-    //Send message history
-    connection.sendUTF(JSON.stringify({
-      messages:messageList,
-      onlineUsers:currentConnections.map(connection=>connection.username)
-    }));
+  wss.broadcast(JSON.stringify({
+    messages:[],
+    onlineUsers:currentConnections.map(connection=>connection.username)
+  }));
 
-    broadcastMessage(JSON.stringify({
+  //Remove connection from current connection array
+  connection.on('close', function(reasonCode, description) {
+    const index = currentConnections.map((e) =>{ return e.username }).indexOf(username);
+
+    console.log(currentConnections[index].username+ ' has disconnected');
+
+    currentConnections.splice(index,1);
+
+    wss.broadcast(JSON.stringify({
       messages:[],
       onlineUsers:currentConnections.map(connection=>connection.username)
     }));
-
-    connection.on('close', function(reasonCode, description) {
-      //Remove connection from current connection array
-      const index = currentConnections.map((e) =>{ return e.connection }).indexOf(connection);
-
-      console.log(currentConnections[index].username+ ' has disconnected');
-
-      currentConnections.splice(index,1);
-      broadcastMessage(JSON.stringify({
-        messages:[],
-        onlineUsers:currentConnections.map(connection=>connection.username)
-      }));
-    });
-
-    connection.on('message', function(message) {
-      //When message is received, add it to current history and send it to everyone connected
-      messageList.push(JSON.parse(message.utf8Data));
-      broadcastMessage(JSON.stringify({
-        messages:[JSON.parse(message.utf8Data)],
-        onlineUsers:currentConnections.map(connection=>connection.username)
-      }));
-    });
-
-    connection.on('error', (error) => console.log("Connection Error: " + error.toString()));
-});
-
-function broadcastMessage(message){
-  currentConnections.map(currentConnection => {
-    currentConnection.connection.sendUTF(message);
   });
-}
+
+  //When message is received, add it to current history and send it to everyone connected
+  connection.on('message', function(message) {
+    messageList.push(JSON.parse(message));
+    wss.broadcast(JSON.stringify({
+      messages:[JSON.parse(message)],
+      onlineUsers:currentConnections.map(connection=>connection.username)
+    }));
+  });
+
+  connection.on('error', (error) => console.log("Connection Error: " + error.toString()));
+});

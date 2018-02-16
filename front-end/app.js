@@ -1,8 +1,18 @@
 const express = require('express');
 const path = require('path');
 const WebSocketClient = require('websocket').client;
+const sassMiddleware = require('node-sass-middleware');
 
 const app = express();
+
+app.use(sassMiddleware({
+  src: path.join(__dirname, 'public/styles/sass'),
+  dest: path.join(__dirname, 'public/styles/css'),
+  debug: true,
+  indentedSyntax: true,
+  outputStyle: 'compressed',
+  prefix: '/styles/css'
+}));
 
 app.use("/", express.static(path.resolve(__dirname, 'public')));
 

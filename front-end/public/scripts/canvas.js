@@ -5,7 +5,11 @@ const canvasContainer = document.getElementById('canvasContainer');
 const ctx = canvas.getContext('2d');
 const chatLink = document.getElementById("chatLink");
 
+//Go to chatroom
 chatLink.onclick = (()=>window.location = window.location.origin + "/chat");
+
+//Clear screen
+clearButton.onclick = (()=> drawingSocket.send('clear'));
 
 canvas.addEventListener("mouseup",mouseup);
 canvas.addEventListener("mousedown",mousedown);
@@ -14,16 +18,15 @@ canvas.addEventListener("mousemove",mousemove);
 canvas.setAttribute("height", "500px");
 canvas.setAttribute("width", "600px");
 
+//Define initial stroke
 let strokeEvent = {
   strokeStyle: '',
   lineWidth: '',
   paths: []
 };
 
-clearButton.onclick = function(){
-  drawingSocket.send('clear');
-}
-
+//When mouse is first clicked, the stroke properties and the initial position is
+//logged
 function mousedown(){
   ctx.strokeStyle = document.getElementById('colorPicker').value;
   ctx.lineWidth = document.getElementById('strokePicker').value;;
@@ -44,10 +47,19 @@ function mouseup(){
   isMouseDown = false;
 }
 
+//Every time the mouse moves, the current position along with the properties
+//are sent to the server
 function mousemove(){
   if(isMouseDown){
     draw();
   }
+}
+
+function draw(){
+  const canvasPos = getCanvasPos();
+  strokeEvent.paths.push({x:canvasPos.x,y:canvasPos.y});
+  drawingSocket.send(JSON.stringify(strokeEvent));
+  // console.log(strokeEvent.paths.length);
 }
 
 function getCanvasPos(){
@@ -60,12 +72,6 @@ function getCanvasPos(){
   const canvasY = clientY-canvasPosition.y;
 
   return {x:canvasX, y:canvasY};
-}
-
-function draw(){
-  const canvasPos = getCanvasPos();
-  strokeEvent.paths.push({x:canvasPos.x,y:canvasPos.y});
-  drawingSocket.send(JSON.stringify(strokeEvent));
 }
 
 function replayHistory(strokes){
