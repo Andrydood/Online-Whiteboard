@@ -29,3 +29,8 @@ node app.js
 The app will be available on localhost:3000
 
 The "ip" variable in the front-end/public/scripts/sharedFunctions.js folder is currently set as 'localhost', but should be changed to the ip of the server.
+
+### Screenshots
+
+![](https://github.com/Andrydood/Online-Whiteboard-and-Chat/blob/master/screenshots/1.png?raw=true)
+![](https://github.com/Andrydood/Online-Whiteboard-and-Chat/blob/master/screenshots/2.png?raw=true)
