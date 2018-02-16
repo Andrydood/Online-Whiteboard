@@ -25,6 +25,8 @@ let strokeEvent = {
   paths: []
 };
 
+let previousPosition = []
+
 //When mouse is first clicked, the stroke properties and the initial position is
 //logged
 function mousedown(){
@@ -37,8 +39,10 @@ function mousedown(){
   strokeEvent = {
     strokeStyle: ctx.strokeStyle,
     lineWidth: ctx.lineWidth,
-    paths: [{x:canvasPos.x,y:canvasPos.y}]
+    paths: []
   };
+
+  previousPosition = {x:canvasPos.x,y:canvasPos.y};
 
   isMouseDown = true;
 }
@@ -47,8 +51,8 @@ function mouseup(){
   isMouseDown = false;
 }
 
-//Every time the mouse moves, the current position along with the properties
-//are sent to the server
+//Every time the mouse moves, the line being drawn (previous+current mouse position)
+//along with the properties are sent to the server
 function mousemove(){
   if(isMouseDown){
     draw();
@@ -57,9 +61,11 @@ function mousemove(){
 
 function draw(){
   const canvasPos = getCanvasPos();
-  strokeEvent.paths.push({x:canvasPos.x,y:canvasPos.y});
+  const currentPosition = {x:canvasPos.x,y:canvasPos.y};
+  strokeEvent.paths = [previousPosition,
+                      currentPosition];
   drawingSocket.send(JSON.stringify(strokeEvent));
-  // console.log(strokeEvent.paths.length);
+  previousPosition = currentPosition;
 }
 
 function getCanvasPos(){
@@ -72,6 +78,22 @@ function getCanvasPos(){
   const canvasY = clientY-canvasPosition.y;
 
   return {x:canvasX, y:canvasY};
+}
+
+//Initialises connection with server, when a message is received, the
+//online user list is deleted and rewritten, and the canvas strokes are
+//drawn
+function initDrawingSocket(){
+  const userList = document.getElementById("userList");
+
+  drawingSocket = new WebSocket( "ws://"+ip+":8080/?name="+usernameCookie,"collaborative-whiteboard");
+  drawingSocket.onmessage = function (event) {
+    const strokes = JSON.parse(event.data).strokes;
+    const onlineUsers = JSON.parse(event.data).onlineUsers;
+    userList.innerHTML = '';
+    onlineUsers.map(user=>displayOnlineUsers(user));
+    strokes.map(stroke=>replayHistory(stroke));
+  }
 }
 
 function replayHistory(strokes){
@@ -89,22 +111,7 @@ function replayHistory(strokes){
   }
 }
 
-function initDrawingSocket(){
-  const userList = document.getElementById("userList");
-
-  drawingSocket = new WebSocket( "ws://"+ip+":8080/?name="+usernameCookie,"collaborative-whiteboard");
-  drawingSocket.onmessage = function (event) {
-    const strokes = JSON.parse(event.data).strokes;
-    const onlineUsers = JSON.parse(event.data).onlineUsers;
-    userList.innerHTML = '';
-    onlineUsers.map(user=>displayOnlineUsers(user));
-    strokes.map(stroke=>replayHistory(stroke));
-  }
-}
-
-
-//Touch Support
-
+//Identical functions to the click based ones but for touch screens
 canvas.addEventListener("touchstart",touchstart);
 canvas.addEventListener("touchend",touchend);
 canvas.addEventListener("touchmove",touchmove);

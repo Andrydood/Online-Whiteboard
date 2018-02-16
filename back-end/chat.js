@@ -22,7 +22,7 @@ wss.on('connection', function(connection, req) {
   const params = new URLSearchParams(req.url);
   const username = params.get('/?name');
 
-  //Add new connection to array
+  //Add new connection to array of online users
   currentConnections.push({username: username});
   console.log(username+' has logged in');
 
@@ -32,12 +32,13 @@ wss.on('connection', function(connection, req) {
     onlineUsers:currentConnections.map(connection=>connection.username)
   }));
 
+  //Send everyone the new  user list
   wss.broadcast(JSON.stringify({
     messages:[],
     onlineUsers:currentConnections.map(connection=>connection.username)
   }));
 
-  //Remove connection from current connection array
+  //Remove connection from current connection array and send everyone the new user list
   connection.on('close', function(reasonCode, description) {
     const index = currentConnections.map((e) =>{ return e.username }).indexOf(username);
 

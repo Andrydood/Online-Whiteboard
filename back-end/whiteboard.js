@@ -8,6 +8,7 @@ let currentConnections = [];
 //Start server and listening on port 8090
 const wss = new WebSocket.Server({ port: 8080 });
 
+//Sends message to everyone
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === WebSocket.OPEN) {
@@ -21,22 +22,23 @@ wss.on('connection', function(connection, req) {
   const params = new URLSearchParams(req.url);
   const username = params.get('/?name');
 
-  //Add new connection to array
+  //Add new user to array
   currentConnections.push({username: username});
   console.log(username + ' has logged in');
 
-  //Send message history
+  //Send stroke history to new connection
   connection.send(JSON.stringify({
     strokes:strokeList,
     onlineUsers:currentConnections.map(connection=>connection.username)
   }));
 
+  //Send everyone the new user list
   wss.broadcast(JSON.stringify({
     strokes:[],
     onlineUsers:currentConnections.map(connection=>connection.username)
   }));
 
-  //Remove connection from current connection array
+  //Remove connection from current connection array and send everyone the new user list
   connection.on('close', function(reasonCode, description) {
     const index = currentConnections.map((e) =>{ return e.username }).indexOf(username);
 
@@ -50,6 +52,8 @@ wss.on('connection', function(connection, req) {
     }));
   });
 
+  //If message is 'clear', send null to indicate to clear the board
+  //Otherwise send everyone the received latest stroke
   connection.on('message', function(message) {
     if(message === 'clear'){
       strokeList=[];

@@ -3,6 +3,7 @@ const nameInput = document.getElementById("nameInput");
 
 loginForm.addEventListener("submit",loginFunction);
 
+//Username can be set as a cookie
 function loginFunction(e){
   e.preventDefault();
   const usernameInput = nameInput.value;

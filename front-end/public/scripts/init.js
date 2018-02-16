@@ -1,5 +1,10 @@
 const usernameCookie = getCookie('username');
 
+//If any page is reached, it checks for the username cookie
+//If cookie is not there, user is taken to page where username can be set,
+//so cookie is generated
+//If cookie is there, cookie is refreshed and user is sent to their wanted
+//page or default to whiteboard
 if(usernameCookie !== ""){
   setCookie('username',usernameCookie,7);
 

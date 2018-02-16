@@ -7,6 +7,20 @@ whiteboardLink.onclick =(()=>window.location = window.location.origin + "/whiteb
 
 chatForm.addEventListener("submit",sendMessage);
 
+//When message is submitted, the username and message content are sent
+function sendMessage(e){
+  e.preventDefault();
+  const message = chatInput.value;
+  if(!isNullOrWhiteSpace(message)){
+    chattingSocket.send(JSON.stringify({username:usernameCookie,message:message}));
+    chatInput.value = "";
+    scrollChatToBottom();
+  }
+}
+
+//Initialises connection with server, when a message is received, the
+//online user list is deleted and rewritten, and the chat messages are
+//displayed
 function initChattingSocket(){
   const userList = document.getElementById("userList");
 
@@ -20,16 +34,6 @@ function initChattingSocket(){
   }
 }
 
-function sendMessage(e){
-  e.preventDefault();
-  const message = chatInput.value;
-  if(!isNullOrWhiteSpace(message)){
-    chattingSocket.send(JSON.stringify({username:usernameCookie,message:message}));
-    chatInput.value = "";
-    scrollChatToBottom();
-  }
-}
-
 function newMessageReceived(message){
   const par = document.createElement('p');
   const text = document.createTextNode(message.username+' : '+message.message)
@@ -38,6 +42,7 @@ function newMessageReceived(message){
   scrollChatToBottom();
 }
 
+//Keep chat scrolled to newest message
 function scrollChatToBottom(){
   chatText.scrollTop = chatText.scrollHeight;
 }
