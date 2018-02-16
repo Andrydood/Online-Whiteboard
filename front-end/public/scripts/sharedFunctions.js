@@ -37,9 +37,10 @@ function addLoginInfo(username){
   const loggedInText = document.createTextNode('Logged in as: '+ username +' ')
   const link = document.createElement('p');
   const linkText = document.createTextNode('(change)')
+  par.id = "loggedInText";
+  link.id = "textLink";
   par.appendChild(loggedInText);
   link.appendChild(linkText);
-  link.classList.add("textLink");
   link.onclick = deleteCookiesAndRefreshPage;
   userStatus.appendChild(par);
   userStatus.appendChild(link);
@@ -48,4 +49,11 @@ function addLoginInfo(username){
 function deleteCookiesAndRefreshPage(){
   deleteCookie('username');
   window.location = window.location.origin;
+}
+
+function displayOnlineUsers(user){
+  const par = document.createElement('p');
+  const text = document.createTextNode(user);
+  par.appendChild(text);
+  userList.appendChild(par);
 }

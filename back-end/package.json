@@ -1,0 +1,10 @@
+{
+  "name": "whiteboard/chatroom back-end",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "websocket": "^1.0.25",
+    "ws": "^4.0.0"
+  }
+}

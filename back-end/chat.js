@@ -7,7 +7,9 @@ let currentConnections = [];
 
 //Start server and listening on port 8090
 const chatServer = http.createServer((request, response) => console.log(' Received request for ' + request.url));
+
 chatServer.listen(8090,() => console.log('Chat Server is listening on port 8090'));
+
 chatWSServer = new WebSocketServer({
     httpServer: chatServer,
     autoAcceptConnections: false
@@ -23,19 +25,36 @@ chatWSServer.on('request', function(request) {
     console.log(request.resourceURL.query.name+' has logged in');
 
     //Send message history
-    connection.sendUTF(JSON.stringify(messageList));
+    connection.sendUTF(JSON.stringify({
+      messages:messageList,
+      onlineUsers:currentConnections.map(connection=>connection.username)
+    }));
+
+    broadcastMessage(JSON.stringify({
+      messages:[],
+      onlineUsers:currentConnections.map(connection=>connection.username)
+    }));
 
     connection.on('close', function(reasonCode, description) {
       //Remove connection from current connection array
       const index = currentConnections.map((e) =>{ return e.connection }).indexOf(connection);
+
       console.log(currentConnections[index].username+ ' has disconnected');
+
       currentConnections.splice(index,1);
+      broadcastMessage(JSON.stringify({
+        messages:[],
+        onlineUsers:currentConnections.map(connection=>connection.username)
+      }));
     });
 
     connection.on('message', function(message) {
       //When message is received, add it to current history and send it to everyone connected
       messageList.push(JSON.parse(message.utf8Data));
-      broadcastMessage(JSON.stringify([JSON.parse(message.utf8Data)]));
+      broadcastMessage(JSON.stringify({
+        messages:[JSON.parse(message.utf8Data)],
+        onlineUsers:currentConnections.map(connection=>connection.username)
+      }));
     });
 
     connection.on('error', (error) => console.log("Connection Error: " + error.toString()));

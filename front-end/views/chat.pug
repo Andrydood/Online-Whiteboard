@@ -1,15 +1,21 @@
 extends general.pug
 
 block links
-  p#whiteboardLink.textLink Whiteboard
+  p#whiteboardLink.redirectLink Go to Whiteboard
   
 block main
-  .container-fluid#mainContainer
+  .container#mainContainer
     .row
-      .col-12#chatContainer
+      .col-8#chatContainer
         #chatBox
           #chatText
           form#chatForm
             input#chatInput(type="text" autocomplete="off")
+            button Send
+            
+      .col-4#userListContainer
+        p Online Users:
+        #userList
+
    
   script(src='scripts/chat.js')

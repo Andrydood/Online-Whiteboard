@@ -1,4 +1,5 @@
-.textLink {
+#textLink, .redirectLink {
+  text-align: center;
   cursor: pointer;
   text-decoration: underline; }
 
@@ -10,7 +11,11 @@
 #userStatus {
   text-align: center;
   width: 100%;
-  display: inline; }
+  display: block;
+  margin: 10px; }
+  #userStatus #textLink, #userStatus #loggedInText {
+    margin: 2px;
+    display: inline; }
 
 #loginScreen {
   margin: 20px;
@@ -27,23 +32,41 @@
       margin: 0 auto; }
     #mainContainer #canvasContainer #controlRow {
       text-align: center;
-      width: 800px;
+      width: 600px;
       margin: 0 auto; }
   #mainContainer #chatContainer #chatBox {
     height: 500px;
-    width: 350px;
-    margin: 0 auto;
-    border: 1px solid black;
-    position: relative;
+    width: 100%;
+    padding: 5px;
     background-color: #fff; }
-    #mainContainer #chatContainer #chatBox #chatInput {
-      width: 100%;
-      bottom: 0;
-      border: 1px solid black;
-      border-top: 2px solid black;
-      height: 30px; }
     #mainContainer #chatContainer #chatBox #chatText {
       height: 470px;
-      overflow: scroll; }
+      overflow-x: hidden;
+      overflow-y: scroll;
+      width: 100%;
+      word-wrap: break-word;
+      border: 1px solid black;
+      padding: 2px; }
+    #mainContainer #chatContainer #chatBox form {
+      display: inline-flex;
+      width: 100%; }
+      #mainContainer #chatContainer #chatBox form #chatInput {
+        width: 100%;
+        border: 1px solid black;
+        height: 30px; }
+      #mainContainer #chatContainer #chatBox form button {
+        width: 60px;
+        height: 30px; }
+  #mainContainer #userListContainer {
+    width: 100%;
+    padding: 5px; }
+    #mainContainer #userListContainer #userList {
+      height: 460px;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      width: 100%;
+      word-wrap: break-word;
+      border: 1px solid black;
+      padding: 5px; }
 
 /*# sourceMappingURL=style.css.map */

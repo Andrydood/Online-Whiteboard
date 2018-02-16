@@ -12,7 +12,7 @@ canvas.addEventListener("mousedown",mousedown);
 canvas.addEventListener("mousemove",mousemove);
 
 canvas.setAttribute("height", "500px");
-canvas.setAttribute("width", "800px");
+canvas.setAttribute("width", "600px");
 
 let strokeEvent = {
   strokeStyle: '',
@@ -84,59 +84,66 @@ function replayHistory(strokes){
 }
 
 function initDrawingSocket(){
-  drawingSocket = new WebSocket( "ws://"+ip+":8080/","collaborative-whiteboard");
+  const userList = document.getElementById("userList");
+
+  drawingSocket = new WebSocket( "ws://"+ip+":8080/?name="+usernameCookie,"collaborative-whiteboard");
   drawingSocket.onmessage = function (event) {
-    const strokes = JSON.parse(event.data);
+    const strokes = JSON.parse(event.data).strokes;
+    const onlineUsers = JSON.parse(event.data).onlineUsers;
+    userList.innerHTML = '';
+    onlineUsers.map(user=>displayOnlineUsers(user));
     strokes.map(stroke=>replayHistory(stroke));
   }
 }
 
 
+//Touch Support
 
-// canvas.addEventListener("touchstart",touchstart);
-// canvas.addEventListener("touchend",touchend);
-// canvas.addEventListener("touchmove",touchmove);
+canvas.addEventListener("touchstart",touchstart);
+canvas.addEventListener("touchend",touchend);
+canvas.addEventListener("touchmove",touchmove);
 
-// //Touch events
-// function touchstart(evt){
-//   ctx.strokeStyle = document.getElementById('colorPicker').value;
-//   ctx.lineWidth = document.getElementById('strokePicker').value;;
-//   ctx.lineCap = 'round';
-//
-//   const canvasPos = getTouchPos(evt.changedTouches[0]);
-//   ctx.beginPath();
-//   ctx.moveTo(canvasPos.x,canvasPos.y);
-//
-//   isMouseDown = true;
-// }
-//
-// function touchend(evt){
-//   isMouseDown = false;
-//   ctx.stroke();
-// }
-//
-// function touchmove(evt){
-//   if(isMouseDown){
-//     drawTouch(evt);
-//   }
-// }
-//
-// function drawTouch(evt){
-//   const canvasPos = getTouchPos(evt.changedTouches[0]);
-//   ctx.lineTo(canvasPos.x,canvasPos.y);
-//   ctx.stroke();
-//   ctx.beginPath();
-//   ctx.lineTo(canvasPos.x,canvasPos.y);
-// }
-//
-// function getTouchPos(touch){
-//   const clientX = touch.clientX;
-//   const clientY = touch.clientY;
-//
-//   const canvasPosition = canvas.getBoundingClientRect();
-//
-//   const canvasX = clientX-canvasPosition.x;
-//   const canvasY = clientY-canvasPosition.y;
-//
-//   return {x:canvasX, y:canvasY};
-// }
+function touchstart(evt){
+  ctx.strokeStyle = document.getElementById('colorPicker').value;
+  ctx.lineWidth = document.getElementById('strokePicker').value;;
+  ctx.lineCap = 'round';
+
+  const canvasPos = getTouchPos(evt.changedTouches[0]);
+
+  strokeEvent = {
+    strokeStyle: ctx.strokeStyle,
+    lineWidth: ctx.lineWidth,
+    paths: [{x:canvasPos.x,y:canvasPos.y}]
+  };
+
+  isMouseDown = true;
+}
+
+function touchend(evt){
+  isMouseDown = false;
+}
+
+function touchmove(evt){
+  if(isMouseDown){
+    drawTouch(evt);
+  }
+}
+
+
+function getTouchPos(touch){
+  const clientX = touch.clientX;
+  const clientY = touch.clientY;
+
+  const canvasPosition = canvas.getBoundingClientRect();
+
+  const canvasX = clientX-canvasPosition.x;
+  const canvasY = clientY-canvasPosition.y;
+
+  return {x:canvasX, y:canvasY};
+}
+
+function drawTouch(evt){
+  const canvasPos = getTouchPos(evt.changedTouches[0]);
+  strokeEvent.paths.push({x:canvasPos.x,y:canvasPos.y});
+  drawingSocket.send(JSON.stringify(strokeEvent));
+}

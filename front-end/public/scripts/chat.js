@@ -8,10 +8,15 @@ whiteboardLink.onclick =(()=>window.location = window.location.origin + "/whiteb
 chatForm.addEventListener("submit",sendMessage);
 
 function initChattingSocket(){
+  const userList = document.getElementById("userList");
+
   chattingSocket = new WebSocket( "ws://"+ip+":8090/?name="+usernameCookie,"chat");
   chattingSocket.onmessage = function (event) {
-    const messages = JSON.parse(event.data);
-    messages.map(message=>newMessage(message));
+    const messages = JSON.parse(event.data).messages;
+    const onlineUsers = JSON.parse(event.data).onlineUsers;
+    userList.innerHTML = '';
+    onlineUsers.map(user=>displayOnlineUsers(user));
+    messages.map(message=>newMessageReceived(message));
   }
 }
 
@@ -25,7 +30,7 @@ function sendMessage(e){
   }
 }
 
-function newMessage(message){
+function newMessageReceived(message){
   const par = document.createElement('p');
   const text = document.createTextNode(message.username+' : '+message.message)
   par.appendChild(text);

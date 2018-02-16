@@ -1,9 +1,11 @@
-$canvasWidth: 800px
+$canvasWidth: 600px
 $canvasHeight: 500px
 
-.textLink
+#textLink, .redirectLink
+  text-align: center
   cursor: pointer
   text-decoration: underline
+
 
 #pageTitle
   margin: 20px
@@ -13,7 +15,12 @@ $canvasHeight: 500px
 #userStatus
   text-align: center
   width: 100%
-  display: inline
+  display: block
+  margin: 10px
+
+  #textLink, #loggedInText
+    margin: 2px
+    display: inline
 
 #loginScreen
   margin: 20px
@@ -39,19 +46,40 @@ $canvasHeight: 500px
   #chatContainer
     #chatBox
       height: $canvasHeight
-      width: 350px
-      margin: 0 auto
-      border: 1px solid black
-      position: relative
+      width: 100%
+      padding: 5px
       background-color: #fff
-
-      #chatInput
-        width: 100%
-        bottom: 0
-        border: 1px solid black
-        border-top: 2px solid black
-        height: 30px
 
       #chatText
         height: $canvasHeight - 30px
-        overflow: scroll
+        overflow-x: hidden
+        overflow-y: scroll
+        width: 100%
+        word-wrap: break-word
+        border: 1px solid black
+        padding: 2px
+
+      form
+        display: inline-flex
+        width: 100%
+        #chatInput
+          width: 100%
+          border: 1px solid black
+          height: 30px
+
+        button
+          width: 60px
+          height: 30px
+
+  #userListContainer
+    width: 100%
+    padding: 5px
+
+    #userList
+      height: $canvasHeight - 40px
+      overflow-x: hidden
+      overflow-y: scroll
+      width: 100%
+      word-wrap: break-word
+      border: 1px solid black
+      padding: 5px

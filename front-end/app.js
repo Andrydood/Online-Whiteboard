@@ -20,4 +20,8 @@ app.get('/chat',(req,res)=>{
   res.render('chat') 
 });
 
+app.use(function(req, res, next){
+    res.status(404).send("Sorry, page not found");
+});
+
 app.listen('3000', ()=>console.log('App listening on 3000'));
