@@ -14,12 +14,16 @@ While in the root folder of the repository
 
 For the back end:
 >`cd back-end`
+>
 >`npm install`
+>
 >`node index.js`
 
 For the front end:
 >`cd front-end`
+>
 >`npm install`
+>
 >`node app.js`
 
 The app will be available on localhost:3000
