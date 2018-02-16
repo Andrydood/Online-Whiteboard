@@ -1,5 +1,5 @@
 const userStatus = document.getElementById("userStatus");
-const ip = "10.134.214.147";
+const ip = "localhost";
 
 function isNullOrWhiteSpace(str) {
   return (!str || str.length === 0 || /^\s*$/.test(str));
