@@ -1,65 +1,64 @@
-const WebSocket = require('ws');
-const URLSearchParams = require('url-search-params');
+const WebSocket = require("ws");
+const URLSearchParams = require("url-search-params");
+/* eslint-disable no-shadow */
 
+// Arrays containing list of messages and list of current online users
+const messageList = [];
+const currentConnections = [];
 
-//Arrays containing list of messages and list of current online users
-let messageList = [];
-let currentConnections = [];
-
-//Start server and listening on port 8090
+// Start server and listening on port 8090
 const wss = new WebSocket.Server({ port: 8090 });
 
 wss.broadcast = function broadcast(data) {
-  wss.clients.forEach(function each(client) {
+  wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(data);
     }
   });
 };
 
-wss.on('connection', function(connection, req) {
-
+wss.on("connection", (connection, req) => {
   const params = new URLSearchParams(req.url);
-  const username = params.get('/?name');
+  const username = params.get("/?name");
 
-  //Add new connection to array of online users
-  currentConnections.push({username: username});
-  console.log(username+' has logged in');
+  // Add new connection to array of online users
+  currentConnections.push({ username });
+  console.log(`${username} has logged in`);
 
-  //Send message history
+  // Send message history
   connection.send(JSON.stringify({
-    messages:messageList,
-    onlineUsers:currentConnections.map(connection=>connection.username)
+    messages: messageList,
+    onlineUsers: currentConnections.map(connection => connection.username),
   }));
 
-  //Send everyone the new  user list
+  // Send everyone the new  user list
   wss.broadcast(JSON.stringify({
-    messages:[],
-    onlineUsers:currentConnections.map(connection=>connection.username)
+    messages: [],
+    onlineUsers: currentConnections.map(connection => connection.username),
   }));
 
-  //Remove connection from current connection array and send everyone the new user list
-  connection.on('close', function(reasonCode, description) {
-    const index = currentConnections.map((e) =>{ return e.username }).indexOf(username);
+  // Remove connection from current connection array and send everyone the new user list
+  connection.on("close", (reasonCode, description) => {
+    const index = currentConnections.map(e => e.username).indexOf(username);
 
-    console.log(currentConnections[index].username+ ' has disconnected');
+    console.log(`${currentConnections[index].username} has disconnected`);
 
-    currentConnections.splice(index,1);
+    currentConnections.splice(index, 1);
 
     wss.broadcast(JSON.stringify({
-      messages:[],
-      onlineUsers:currentConnections.map(connection=>connection.username)
+      messages: [],
+      onlineUsers: currentConnections.map(connection => connection.username),
     }));
   });
 
-  //When message is received, add it to current history and send it to everyone connected
-  connection.on('message', function(message) {
+  // When message is received, add it to current history and send it to everyone connected
+  connection.on("message", (message) => {
     messageList.push(JSON.parse(message));
     wss.broadcast(JSON.stringify({
-      messages:[JSON.parse(message)],
-      onlineUsers:currentConnections.map(connection=>connection.username)
+      messages: [JSON.parse(message)],
+      onlineUsers: currentConnections.map(connection => connection.username),
     }));
   });
 
-  connection.on('error', (error) => console.log("Connection Error: " + error.toString()));
+  connection.on("error", error => console.log(`Connection Error: ${error.toString()}`));
 });

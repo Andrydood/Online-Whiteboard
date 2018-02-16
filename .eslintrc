@@ -1,0 +1,12 @@
+{
+  "extends": "airbnb",
+
+  "rules": {
+    "quotes": ["error","double"],
+    "no-console": 0,
+    "no-unused-vars": 0,
+    "no-plusplus": 0,
+    "no-undef": 0,
+    "no-use-before-define": 0
+  }
+}
